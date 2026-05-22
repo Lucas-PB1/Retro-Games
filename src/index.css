@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=VT323&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "VT323", "Share Tech Mono", monospace;
+  --font-mono: "Share Tech Mono", monospace;
+  --font-retro: "Press Start 2P", monospace;
+}
+
+/* 1960s Retro TV/Terminal styling with Geometric Balance colors */
+.crt-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* CRT Screen Scanline Overlay mapped to Geometric Balance Amber */
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 176, 0, 0.04), rgba(255, 176, 0, 0.02), rgba(255, 176, 0, 0.04));
+  z-index: 10;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+/* CRT Curve / Vignette mapped to dark Amber amber shading */
+.crt-screen::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: radial-gradient(circle, rgba(0,0,0,0) 65%, rgba(13, 10, 8, 0.85) 100%);
+  z-index: 11;
+  pointer-events: none;
+}
+
+/* Phosphorus screen glows */
+.glow-green {
+  text-shadow: 0 0 6px rgba(255, 176, 0, 0.8), 0 0 12px rgba(255, 176, 0, 0.4);
+}
+
+.glow-amber {
+  text-shadow: 0 0 6px rgba(255, 176, 0, 0.8), 0 0 12px rgba(255, 176, 0, 0.4);
+}
+
+.glow-blue {
+  text-shadow: 0 0 6px rgba(255, 176, 0, 0.8), 0 0 12px rgba(255, 176, 0, 0.4);
+}
+
+.glow-red {
+  text-shadow: 0 0 6px rgba(239, 68, 68, 0.8), 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Geometric Tactile button */
+.retro-switch {
+  transform: translateY(0px);
+  transition: all 0.05s ease;
+  box-shadow: 0 4px 0px #332200, 0 6px 8px rgba(0, 0, 0, 0.5);
+  border-radius: 0px;
+}
+
+.retro-switch:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0px #332200, 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.retro-switch-green {
+  background: #ffb000;
+  border: 2px solid #ffb000;
+  color: #0d0a08 !important;
+}
+.retro-switch-green:hover {
+  background: #ffc845;
+  border-color: #ffc845;
+}
+.retro-switch-green:active {
+  background: #ffb000;
+}
+
+.retro-switch-amber {
+  background: #1a140f;
+  border: 2px solid #ffb000;
+  color: #ffb000 !important;
+}
+.retro-switch-amber:hover {
+  background: #332200;
+}
+.retro-switch-amber:active {
+  background: #1a140f;
+}
+
+.retro-switch-blue {
+  background: #1a140f;
+  border: 2px solid #ef4444;
+  color: #ef4444 !important;
+}
+.retro-switch-blue:hover {
+  background: #2d1010;
+}
+
+/* Flickering animation for retro computer look */
+@keyframes crt-flicker {
+  0% { opacity: 0.985; }
+  50% { opacity: 0.995; }
+  100% { opacity: 0.985; }
+}
+
+.crt-flicker {
+  animation: crt-flicker 0.15s infinite;
+}
+
+/* Geometric Bezel representing 1968 custom layout */
+.wood-bezel {
+  background: #1a140f;
+  border: 4px solid #ffb000;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 8px 20px rgba(0,0,0,0.7);
+  border-radius: 4px;
+}

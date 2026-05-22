@@ -1,0 +1,6 @@
+{
+  "name": "Retro Hack 60s",
+  "description": "Um painel gamificado de códigos de hack e consequências com estética retro dos anos 60 e login Google.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

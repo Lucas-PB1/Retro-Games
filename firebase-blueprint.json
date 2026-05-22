@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "hack_code": {
+      "title": "Hack Code",
+      "description": "Retro game hack code containing a name and button combinations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "nome": { "type": "string", "description": "Name of the hack code" },
+        "movimentos": { "type": "string", "description": "Controller combinations or button layout sequence" },
+        "desc": { "type": "string", "description": "Description of the hack code action or cheat outcome" },
+        "revelado": { "type": "boolean", "description": "Whether this hack code has been picked and revealed" },
+        "userId": { "type": "string", "description": "ID of the user who registered it" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Time of creation" }
+      },
+      "required": ["id", "nome", "movimentos", "desc", "revelado", "userId", "createdAt"]
+    },
+    "consequence": {
+      "title": "Consequence",
+      "description": "Random consequence containing a short name and description",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "nome": { "type": "string", "description": "Name of the consequence" },
+        "desc": { "type": "string", "description": "Description of the consequence" },
+        "userId": { "type": "string", "description": "ID of the user who registered it" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Time of creation" }
+      },
+      "required": ["id", "nome", "desc", "userId", "createdAt"]
+    },
+    "log": {
+      "title": "Action Log",
+      "description": "History log of rolls, actions and consequences clicked",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique ID of the log" },
+        "userId": { "type": "string", "description": "Authenticated user's uid" },
+        "userEmail": { "type": "string", "description": "Authenticated user's email" },
+        "userName": { "type": "string", "description": "Authenticated user's name" },
+        "photoURL": { "type": "string", "description": "Authenticated user's avatar image" },
+        "tipo": { "type": "string", "enum": ["roll_hack", "consequence", "reset"], "description": "Action category" },
+        "hackNome": { "type": "string", "description": "Name of hack rolled (optional)" },
+        "hackMovimentos": { "type": "string", "description": "Moves of hack rolled (optional)" },
+        "conseqNome": { "type": "string", "description": "Consequence name rolled (optional)" },
+        "conseqDesc": { "type": "string", "description": "Consequence description rolled (optional)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Time of action" }
+      },
+      "required": ["id", "userId", "userEmail", "userName", "tipo", "createdAt"]
+    }
+  },
+  "firestore": {
+    "hack_codes/{hackId}": {
+      "schema": "hack_code",
+      "description": "Global collection of hack codes"
+    },
+    "consequences/{consequenceId}": {
+      "schema": "consequence",
+      "description": "Global collection of game consequences"
+    },
+    "logs/{logId}": {
+      "schema": "log",
+      "description": "Gamified interaction records and change audit log"
+    }
+  }
+}
