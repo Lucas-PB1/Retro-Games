@@ -82,7 +82,7 @@ service cloud.firestore {
             || incoming().diff(existing()).affectedKeys().hasOnly(['nome', 'movimentos', 'desc'])
             || incoming().diff(existing()).affectedKeys().size() == 0);
             
-      allow delete: if true;
+      allow delete: if isVerified();
     }
     
     match /consequences/{consequenceId} {
@@ -102,7 +102,7 @@ service cloud.firestore {
         && (incoming().diff(existing()).affectedKeys().hasOnly(['nome', 'desc'])
             || incoming().diff(existing()).affectedKeys().size() == 0);
             
-      allow delete: if true;
+      allow delete: if isVerified();
     }
     
     match /logs/{logId} {
@@ -114,7 +114,7 @@ service cloud.firestore {
         && incoming().createdAt == request.time;
         
       allow update: if false;
-      allow delete: if true;
+      allow delete: if isVerified();
     }
   }
 }

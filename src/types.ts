@@ -1,3 +1,20 @@
+import type { Timestamp } from "firebase/firestore";
+
+export type LogTipo = "roll_hack" | "consequence" | "reset";
+
+export type LogAdditional = {
+  hackNome?: string;
+  hackMovimentos?: string;
+  conseqNome?: string;
+  conseqDesc?: string;
+  custom?: string;
+};
+
+export type WriteLogFn = (
+  tipo: LogTipo,
+  additional?: LogAdditional
+) => Promise<void>;
+
 export interface HackCode {
   id: string;
   nome: string;
@@ -5,7 +22,7 @@ export interface HackCode {
   desc: string;
   revelado: boolean;
   userId: string;
-  createdAt: any; // Firestore Timestamp
+  createdAt: Timestamp | null;
 }
 
 export interface Consequence {
@@ -13,7 +30,7 @@ export interface Consequence {
   nome: string;
   desc: string;
   userId: string;
-  createdAt: any; // Firestore Timestamp
+  createdAt: Timestamp | null;
 }
 
 export interface GameLog {
@@ -22,21 +39,21 @@ export interface GameLog {
   userEmail: string;
   userName: string;
   photoURL?: string;
-  tipo: "roll_hack" | "consequence" | "reset";
-  hackNome?: string;
-  hackMovimentos?: string;
-  conseqNome?: string;
-  conseqDesc?: string;
-  createdAt: any; // Firestore Timestamp
+  tipo: LogTipo;
+  hackNome?: string | null;
+  hackMovimentos?: string | null;
+  conseqNome?: string | null;
+  conseqDesc?: string | null;
+  createdAt: Timestamp | null;
 }
 
 export enum OperationType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  LIST = 'list',
-  GET = 'get',
-  WRITE = 'write',
+  CREATE = "create",
+  UPDATE = "update",
+  DELETE = "delete",
+  LIST = "list",
+  GET = "get",
+  WRITE = "write",
 }
 
 export interface FirestoreErrorInfo {
