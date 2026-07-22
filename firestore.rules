@@ -77,6 +77,7 @@ service cloud.firestore {
     
     // Core Collections — sessão compartilhada: qualquer operador verificado
     // pode ler/apagar fitas (jogo em grupo); create/update amarra userId.
+    // Claim admin (token.admin) fica para endurecer deletes quando houver Admin SDK.
     
     match /hack_codes/{hackId} {
       allow read: if isVerified();
@@ -84,12 +85,14 @@ service cloud.firestore {
       allow create: if isVerified() 
         && isValidId(hackId) 
         && isValidHackCode(incoming())
+        && incoming().id == hackId
         && incoming().createdAt == request.time;
         
       allow update: if isVerified()
         && isValidId(hackId)
         && isValidHackCode(incoming())
         && incoming().id == existing().id
+        && incoming().id == hackId
         && incoming().userId == existing().userId
         && incoming().createdAt == existing().createdAt
         && (incoming().diff(existing()).affectedKeys().hasOnly(['revelado']) 
@@ -105,12 +108,14 @@ service cloud.firestore {
       allow create: if isVerified()
         && isValidId(consequenceId)
         && isValidConsequence(incoming())
+        && incoming().id == consequenceId
         && incoming().createdAt == request.time;
         
       allow update: if isVerified()
         && isValidId(consequenceId)
         && isValidConsequence(incoming())
         && incoming().id == existing().id
+        && incoming().id == consequenceId
         && incoming().userId == existing().userId
         && incoming().createdAt == existing().createdAt
         && (incoming().diff(existing()).affectedKeys().hasOnly(['nome', 'desc'])
@@ -125,6 +130,7 @@ service cloud.firestore {
       allow create: if isVerified()
         && isValidId(logId)
         && isValidLog(incoming())
+        && incoming().id == logId
         && incoming().createdAt == request.time;
         
       allow update: if false;
