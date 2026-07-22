@@ -1,0 +1,18 @@
+---
+description: ESLint — flat config, rules, disables, TypeScript-ESLint. Use when editing eslint.config, fixing lint errors, or eslint-disable.
+globs:
+  - "**/eslint.config.*"
+  - "**/.eslintrc*"
+  - "**/eslint.config.js"
+  - "**/eslint.config.mjs"
+  - "**/eslint.config.ts"
+alwaysApply: false
+---
+
+# ESLint
+
+1. Carregue skill `eslint` e a reference do subproblema.
+2. Respeite a config **do projeto** (flat vs legacy; `eslint-config-next` se existir).
+3. Prefira corrigir código a `eslint-disable` amplo.
+4. Formatação → skill/rule `prettier`; não duplique estilo no ESLint.
+5. Rode o script `lint` do repo nos arquivos tocados.

@@ -1,0 +1,12 @@
+---
+description: TypeScript/JavaScript — roteia tipagem vs runtime
+globs: "**/*.{ts,tsx,js,jsx,mjs,cjs}"
+alwaysApply: false
+---
+
+# TypeScript / JavaScript
+
+1. Tipagem, generics, narrowing → `typescript`.
+2. Event loop, ESM, closures sem foco em tipos → `javascript`.
+3. Em projetos TS: não use `any` para silenciar.
+4. Qualidade: rule `craftsmanship` (sempre).

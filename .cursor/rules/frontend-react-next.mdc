@@ -1,0 +1,13 @@
+---
+description: React/components — roteia skill react e estilo (App Router fica em next-app-router)
+globs: "**/components/**/*,**/*.{tsx,jsx}"
+alwaysApply: false
+---
+
+# React / components
+
+1. Confirme se o arquivo é Next (`app/`/`pages/`) ou React puro — App Router detalhado → rule `next-app-router`.
+2. Leia `.cursor/skills/react/SKILL.md` + refs do subproblema.
+3. Estilo: Tailwind → `tailwind`; senão → `css`. Markup/a11y → `html`.
+4. Usabilidade → `ux`; visual → `ui`.
+5. Tipagem → `typescript` quando tipos forem parte do trabalho.

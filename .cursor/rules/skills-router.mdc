@@ -1,0 +1,61 @@
+---
+description: Roteia skills por intenção (React, Next, SQL, Nest, Docker, UX/UI, DDD, FSD, Clean, etc.). Use when deciding which technology or architecture skill to load for the user request.
+alwaysApply: false
+---
+
+# Roteador de Skills
+
+Carregue skills relevantes; dentro delas, leia só as `references/` do subproblema.
+
+| Sinais | Skill |
+|---|---|
+| React, hooks, JSX/TSX, estado | `react` |
+| createContext, useContext, Provider | `context-api` (+ `react`) |
+| Next.js, App Router, RSC, `app/` | `nextjs` (+ `react` se UI) |
+| SEO, metadata, OG, sitemap, robots | `seo` |
+| Cypress, e2e, `cy.`, flake Cloud | `cypress` (+ `testing`) |
+| Vitest, `vi.mock`, `*.test.ts` unit | `vitest` (+ `testing`) |
+| Estratégia de testes, pirâmide, AAA | `testing` |
+| ESLint, eslint.config, lint errors | `eslint` |
+| Prettier, .prettierrc, format | `prettier` |
+| REST, recursos HTTP, status, OpenAPI contract | `rest-api` |
+| Route Handler, `app/api`, REST no Next | `rest-api` + `nextjs` (+ rules `rest-api` / `api-http`) |
+| Server Action, `"use server"` | `nextjs` (+ `next-server-actions` rule) |
+| API Nest / controllers HTTP | `rest-api` + `nestjs` (+ `api-http`) |
+| CSS, cascade, flex/grid | `css` |
+| HTML semântico, forms, a11y markup | `html` |
+| TypeScript, tipos, generics | `typescript` |
+| JavaScript runtime, async, ESM | `javascript` |
+| UX, fluxo, usabilidade, fricção | `ux` |
+| UI, hierarquia visual, estados visuais | `ui` |
+| Design tokens, tema, escalas visuais | `design-tokens` |
+| Responsivo, breakpoints, fluido, touch | `responsive` |
+| Motion, animação, transitions, keyframes | `motion` |
+| Tailwind, utilities, config | `tailwind` |
+| NestJS, módulos, DI, guards | `nestjs` |
+| Docker, Dockerfile, compose | `docker` |
+| Vercel, preview, deploy hosting | `vercel` |
+| PostgreSQL específico | `postgres` |
+| Supabase, RLS, Auth Supabase | `supabase` |
+| Firebase, Firestore, Rules | `firebase` |
+| SQL, joins, DDL, queries | `sql` |
+| Legibilidade, nomes, smells | `clean-code` |
+| Duplicação / abstração | `dry` |
+| SRP/OCP/LSP/ISP/DIP | `solid` |
+| DDD, bounded context, aggregates, domain events | `ddd` |
+| Feature-Sliced Design, FSD, layers FE | `feature-sliced` |
+| Clean Architecture, Dependency Rule, use cases | `clean-architecture` |
+| Hexagonal, ports & adapters | `hexagonal` |
+| Vertical Slice, feature folders, VSA | `vertical-slice` |
+| Modular Monolith, module boundaries | `modular-monolith` |
+
+## Critérios
+
+- Não carregue Next só por `.tsx`; confirme Next no projeto.
+- UX ≠ UI; Firebase ≠ Supabase; SQL genérico ≠ Postgres (pode somar ambos).
+- Não force `ddd` em CRUD; não aplique `feature-sliced` em backend.
+- Prefira a raiz do problema; use o **mapa de references** do `SKILL.md`.
+- Arquitetura em detalhe → também rule `architecture-patterns`.
+- Next App Router → rule `next-app-router`; REST → `rest-api` + `api-http`; Actions → `next-server-actions`.
+- Visual/estilo → rules `frontend-visual` / `motion`; skills `ui`, `design-tokens`, `responsive`, `motion`.
+- Lint/format → `eslint` / `prettier`; testes → `testing` + `vitest` / `cypress`.

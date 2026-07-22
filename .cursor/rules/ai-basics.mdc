@@ -1,0 +1,14 @@
+---
+description: Guardrails básicos de comportamento do agente (IA) — verificação, secrets, diff mínimo
+alwaysApply: true
+---
+
+# AI basics
+
+1. **Não invente** APIs, libs, arquivos, rotas ou configs — verifique no repo antes.
+2. Não invente versões/APIs deprecadas do Next; siga o padrão do projeto (`app/` vs `pages/`).
+3. **Nunca** commit/expor secrets; nada sensível em `NEXT_PUBLIC_*`.
+4. Sem comandos destrutivos (`reset --hard`, force push, drop DB) sem pedido explícito.
+5. Diff mínimo; não refatore “de brinde”.
+6. Ambíguo (Server Action vs Route Handler, RSC vs client): pergunte ou copie o padrão já usado no repo.
+7. Skills: abra `SKILL.md` e só as `references/` do subproblema — não a pasta inteira.

@@ -1,0 +1,23 @@
+---
+description: Qualidade de código SEMPRE — clean-code, DRY e SOLID em todo código
+alwaysApply: true
+---
+
+# Craftsmanship (sempre)
+
+Ao **escrever, editar ou revisar código**, aplique sempre:
+
+1. `.cursor/skills/clean-code/SKILL.md` — e a reference do subproblema (`nomes`, `funcoes`, `smells`, …).
+2. `.cursor/skills/dry/SKILL.md` — evite duplicar **conhecimento/regra**; não force abstração prematura.
+3. `.cursor/skills/solid/SKILL.md` — respeite limites de módulo; leia o princípio violado (`srp`…`dip`) só se couber.
+
+## Obrigatório
+
+- Nomes honestos; funções focadas; early returns; erros tratados.
+- Não engolir exceções; não `any` para silenciar TS.
+- Em protótipos explícitos: clareza local > arquitetura pesada, mas ainda limpe nomes e duplicação óbvia de regra.
+
+## Não fazer
+
+- Skipar estas skills porque “é um diff pequeno”.
+- Aplicar SOLID de forma dogmática em scripts one-off sem pedido de arquitetura.

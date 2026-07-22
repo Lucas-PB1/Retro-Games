@@ -1,0 +1,20 @@
+---
+description: Estratégia de testes — pirâmide, AAA, doubles, flake. Use when designing tests, reviewing test quality, or choosing unit vs integration vs e2e.
+globs:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/tests/**"
+  - "**/__tests__/**"
+  - "**/cypress/**"
+alwaysApply: false
+---
+
+# Testing
+
+1. Skill `testing` para estratégia; `vitest` ou `cypress` para a ferramenta.
+2. Escolha o nível certo na pirâmide (não e2e para tudo).
+3. AAA + nomes de comportamento; doubles justificados.
+4. Determinismo: sem sleeps, sem ordem entre arquivos.
+5. Coverage não substitui testes que falham por regressão real.

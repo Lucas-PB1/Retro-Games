@@ -1,0 +1,12 @@
+---
+description: Método progressive disclosure — quando carregar SKILL.md vs references. Use when choosing which skill or reference files to read.
+alwaysApply: false
+---
+
+# Método (skills)
+
+1. Always-on: `craftsmanship` (qualidade) e `ai-basics` (comportamento do agente).
+2. Skills: use `description` → abra `SKILL.md` só se relevante.
+3. Em `references/`, leia **só** os arquivos do mapa que batem com o subproblema.
+4. Código do repositório manda sobre preferência abstrata da skill.
+5. Imperativo e concreto; não despejar a skill inteira no chat.

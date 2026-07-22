@@ -1,0 +1,26 @@
+---
+description: Padrões de arquitetura — DDD, FSD, Clean, Hexagonal, Vertical Slice, Modular Monolith. Use when structuring projects, choosing architecture, organizing folders/modules, or the user mentions DDD, feature-sliced, clean architecture, hexagonal, ports and adapters, vertical slice, or modular monolith.
+alwaysApply: false
+---
+
+# Padrões de projeto
+
+Quando o pedido for **estrutura, arquitetura ou organização de pastas/módulos**, abra a skill certa e **só** as `references/` do subproblema.
+
+| Sinais | Skill |
+|---|---|
+| Domínio rico, bounded context, aggregates, linguagem ubíqua | `ddd` |
+| Frontend FSD, layers app/pages/features/entities/shared | `feature-sliced` |
+| Anéis, Dependency Rule, use cases isolados de framework | `clean-architecture` |
+| Ports & adapters, driving/driven | `hexagonal` |
+| Feature folders, slice por use-case, VSA | `vertical-slice` |
+| Monolito com módulos, ownership de dados, extrair serviço depois | `modular-monolith` |
+
+## Critérios
+
+- Não force `ddd` em CRUD simples.
+- Não aplique `feature-sliced` em backend Nest.
+- Não misture FSD + Clean no mesmo lado sem o usuário pedir híbrido.
+- Hexagonal e Clean são compatíveis — escolha pela linguagem do pedido (ports vs anéis).
+- Vertical Slice ≠ FSD (FE); Modular Monolith ≠ microservices no dia 1.
+- Qualidade de código: rule `craftsmanship` (sempre).

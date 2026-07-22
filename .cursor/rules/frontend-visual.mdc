@@ -1,0 +1,15 @@
+---
+description: Frontend visual — UI, tokens, responsivo, CSS/Tailwind. Use when working on styles, layout, theming, visual design, or responsive UI.
+globs: "**/*.{css,scss},**/*.module.css,**/tailwind*.{js,ts,cjs,mjs},**/styles/**/*,**/theme/**/*"
+alwaysApply: false
+---
+
+# Frontend visual
+
+1. Hierarquia, estados, contraste → skill `ui`.
+2. Tokens / tema / escalas → `design-tokens`.
+3. Breakpoints, fluido, touch → `responsive`.
+4. Implementação → `css` e/ou `tailwind` (padrão do repo).
+5. Animação / transição → skill `motion` (+ rule `motion` se arquivo de animação).
+6. Fluxo/usabilidade → `ux` (não confundir com visual).
+7. Não invente design system paralelo ao do projeto.

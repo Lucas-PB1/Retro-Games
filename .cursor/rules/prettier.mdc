@@ -1,0 +1,15 @@
+---
+description: Prettier — formatação e conflitos com ESLint. Use when editing .prettierrc, prettierignore, or format scripts.
+globs:
+  - "**/.prettierrc*"
+  - "**/prettier.config.*"
+  - "**/.prettierignore"
+alwaysApply: false
+---
+
+# Prettier
+
+1. Skill `prettier` — siga a config do repo.
+2. Diff mínimo: não reformatar o monorepo sem pedido.
+3. Conflito com ESLint → `eslint-config-prettier` / skill `eslint`.
+4. Rode `format` / `prettier --check` do projeto.

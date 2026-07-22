@@ -1,0 +1,14 @@
+---
+description: Markup e estilo — roteia html, css, tailwind e camada visual
+globs: "**/*.{html,css,scss},**/tailwind*.{js,ts,cjs,mjs},**/*.module.css"
+alwaysApply: false
+---
+
+# Markup e estilo
+
+1. Semântica / forms / a11y → `html`.
+2. Cascade, layout, tokens CSS → `css`.
+3. Utilities / config Tailwind → `tailwind`.
+4. Visual (hierarquia/tema/responsivo) → `ui`, `design-tokens`, `responsive` (rule `frontend-visual`).
+5. Animação → `motion`.
+6. Não misture sistemas de estilo sem seguir o repo.

@@ -1,0 +1,15 @@
+---
+description: Stack e convenções do Retro-Games (React + Vite + Firebase)
+alwaysApply: true
+---
+
+# Projeto Retro-Games — contexto local
+
+- React 19 + Vite SPA (`src/`); **não** é Next.js — ignore App Router / Server Actions / `NEXT_PUBLIC_*`
+- TypeScript; validar com `npm run lint` (`tsc --noEmit`)
+- Estilo: Tailwind 4 (+ CSS em `src/index.css`); ícones lucide; animações com `motion` quando fizer sentido
+- Dados/auth: Firebase Auth + Firestore — seguir `src/lib/firebase.ts` e `firestore.rules`
+- Entrada: `src/main.tsx` → `src/App.tsx`; componentes em `src/components/`
+- Comandos: `npm run dev` | `npm run build` | `npm run lint`
+- Nunca commit secrets; use `.env.local` só localmente (ver `.env.example`)
+- Skills prioritárias neste repo: `react`, `firebase`, `tailwind`, `typescript`, `motion`, `ui`/`ux`

@@ -1,0 +1,20 @@
+---
+description: Vitest — unit/integration, mocks, config. Use when editing vitest.config or *.test.ts / *.spec.ts with Vitest.
+globs:
+  - "**/vitest.config.*"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"
+  - "**/tests/**"
+  - "**/__tests__/**"
+alwaysApply: false
+---
+
+# Vitest
+
+1. Skills `vitest` + `testing` (estratégia).
+2. Siga config/scripts do repo; environment correto (`node`/`jsdom`).
+3. Comportamento > implementação; mocks nas bordas.
+4. Sem `test.only` commitado; rode os testes afetados.
+5. E2E browser → `cypress`, não Vitest.

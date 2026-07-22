@@ -1,0 +1,14 @@
+---
+description: Motion / animação — timing, reduced-motion, CSS vs JS. Use when adding animations, transitions, keyframes, framer-motion, or microinteractions.
+globs: "**/*.{css,scss},**/*motion*,**/*animat*,**/*transition*"
+alwaysApply: false
+---
+
+# Motion
+
+1. Leia `.cursor/skills/motion/SKILL.md` + ref do subproblema.
+2. Propósito claro; senão não anime.
+3. Sempre trate `prefers-reduced-motion`.
+4. Prefira `transform`/`opacity`; use a lib de motion **já no repo**.
+5. Tokens de duração → `design-tokens` se o DS tiver.
+6. Não adicione Framer/GSAP/etc. sem pedido explícito.
