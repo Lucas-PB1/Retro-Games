@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export type Notification = { message: string; type: "success" | "error" };
 
@@ -11,5 +11,13 @@ export function useNotification(ms = 5000) {
     return () => clearTimeout(timer);
   }, [notification, ms]);
 
-  return { notification, setNotification };
+  const notifySuccess = useCallback((message: string) => {
+    setNotification({ message, type: "success" });
+  }, []);
+
+  const notifyError = useCallback((message: string) => {
+    setNotification({ message, type: "error" });
+  }, []);
+
+  return { notification, setNotification, notifySuccess, notifyError };
 }

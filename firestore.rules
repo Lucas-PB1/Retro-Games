@@ -8,6 +8,7 @@ service cloud.firestore {
     }
     
     // Global Helper Primitives
+    // Limites de string alinhados a src/lib/limits.ts (FIELD_MAX).
     function isValidId(id) {
       return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
@@ -16,8 +17,9 @@ service cloud.firestore {
       return request.auth != null;
     }
     
+    // Conta autenticada com e-mail verificado (Google Auth no client).
     function isVerified() {
-      return isSignedIn();
+      return isSignedIn() && request.auth.token.email_verified == true;
     }
     
     function incoming() {
@@ -26,6 +28,12 @@ service cloud.firestore {
     
     function existing() {
       return resource.data;
+    }
+    
+    function optionalStringMax(data, key, max) {
+      return !(key in data)
+        || data[key] == null
+        || (data[key] is string && data[key].size() <= max);
     }
     
     // Entity Schema Validators
@@ -59,10 +67,16 @@ service cloud.firestore {
         && data.userEmail is string && data.userEmail.size() <= 128
         && data.userName is string && data.userName.size() <= 128
         && data.tipo is string && (data.tipo == 'roll_hack' || data.tipo == 'consequence' || data.tipo == 'reset')
-        && data.createdAt is timestamp;
+        && data.createdAt is timestamp
+        && optionalStringMax(data, 'photoURL', 2048)
+        && optionalStringMax(data, 'hackNome', 250)
+        && optionalStringMax(data, 'hackMovimentos', 100)
+        && optionalStringMax(data, 'conseqNome', 100)
+        && optionalStringMax(data, 'conseqDesc', 250);
     }
     
-    // Core Collections
+    // Core Collections — sessão compartilhada: qualquer operador verificado
+    // pode ler/apagar fitas (jogo em grupo); create/update amarra userId.
     
     match /hack_codes/{hackId} {
       allow read: if isVerified();

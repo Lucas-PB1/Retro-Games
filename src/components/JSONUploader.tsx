@@ -1,5 +1,5 @@
-import { useState, type ChangeEvent, type DragEvent } from "react";
-import { Play, Sparkles, AlertTriangle, CheckCircle, FileJson } from "lucide-react";
+import { useState } from "react";
+import { Play, Sparkles, FileJson } from "lucide-react";
 import { WriteLogFn } from "../types";
 import { errorMessage } from "../lib/firebase";
 import { PRESET_CONSEQUENCES, PRESET_HACKS } from "../lib/presets";
@@ -8,6 +8,11 @@ import {
   uploadHacksFromJson,
   type UploadType,
 } from "../lib/uploadJson";
+import MemoryStats from "./MemoryStats";
+import UploadTypeTabs from "./UploadTypeTabs";
+import JsonDropZone from "./JsonDropZone";
+import JsonManualEditor from "./JsonManualEditor";
+import UploadFeedback from "./UploadFeedback";
 
 interface JSONUploaderProps {
   userId: string;
@@ -61,34 +66,16 @@ export default function JSONUploader({
     reader.readAsText(file);
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) processFile(file);
-  };
-
-  const handleDrag = (e: DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) processFile(file);
-  };
-
   const clearInput = () => {
     setJsonInput("");
     setErrorMsg(null);
     setSuccessMsg(null);
     setSelectedFileName(null);
+  };
+
+  const handleTypeChange = (type: UploadType) => {
+    setUploadType(type);
+    clearInput();
   };
 
   const handleLoadPresets = () => {
@@ -152,160 +139,36 @@ export default function JSONUploader({
       <div className="flex items-center justify-between border-b-2 border-[#ffb000] pb-2 mb-4">
         <div className="flex items-center gap-2">
           <FileJson className="w-5 h-5 text-[#ffb000]" />
-          <span className="font-retro text-xs tracking-wider text-[#ffb000]">FILTRE DISQUETES // JSON</span>
+          <span className="font-retro text-xs tracking-wider text-[#ffb000]">
+            FILTRE DISQUETES // JSON
+          </span>
         </div>
         <div className="text-right text-[10px] uppercase font-mono text-[#ffb000]/60">
           Setor de memória ativa
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mb-4 text-center font-mono text-xs">
-        <div className="p-2 border border-[#ffb000]/30 bg-[#0d0a08] rounded-none">
-          <p className="text-[#ffb000]/60 text-[10px]">MEMÓRIA HACKS</p>
-          <p className="text-sm font-bold text-[#ffb000] glow-amber">{existingHacksCount} CÓDIGOS</p>
-        </div>
-        <div className="p-2 border border-[#ffb000]/30 bg-[#0d0a08] rounded-none">
-          <p className="text-[#ffb000]/60 text-[10px]">MEMÓRIA CONSEQ.</p>
-          <p className="text-sm font-bold text-[#ffb000] glow-amber">
-            {existingConsequencesCount} EFEITOS
-          </p>
-        </div>
-      </div>
+      <MemoryStats
+        hacksCount={existingHacksCount}
+        consequencesCount={existingConsequencesCount}
+      />
 
-      <div className="grid grid-cols-2 gap-2 mb-4">
-        <button
-          id="tab-hacks-upload"
-          onClick={() => {
-            setUploadType("hacks");
-            clearInput();
-          }}
-          className={`py-2 px-3 text-xs uppercase font-retro flex items-center justify-center gap-1.5 rounded-none transition-all border-2 cursor-pointer ${
-            uploadType === "hacks"
-              ? "bg-[#ffb000] border-[#ffb000] text-[#0d0a08] font-black"
-              : "border-[#ffb000]/30 text-[#ffb000]/60 hover:text-[#ffb000] hover:bg-[#332200]"
-          }`}
-        >
-          Lista de Códigos
-        </button>
-        <button
-          id="tab-consq-upload"
-          onClick={() => {
-            setUploadType("consequences");
-            clearInput();
-          }}
-          className={`py-2 px-3 text-xs uppercase font-retro flex items-center justify-center gap-1.5 rounded-none transition-all border-2 cursor-pointer ${
-            uploadType === "consequences"
-              ? "bg-[#ffb000] border-[#ffb000] text-[#0d0a08] font-black"
-              : "border-[#ffb000]/30 text-[#ffb000]/60 hover:text-[#ffb000] hover:bg-[#332200]"
-          }`}
-        >
-          Consequências
-        </button>
-      </div>
+      <UploadTypeTabs uploadType={uploadType} onChange={handleTypeChange} />
 
-      <div
-        onDragEnter={handleDrag}
-        onDragOver={handleDrag}
-        onDragLeave={handleDrag}
-        onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-none p-6 text-center transition-all relative ${
-          dragActive
-            ? "border-emerald-500 bg-emerald-950/20 text-[#ffb000] scale-[1.01]"
-            : "border-[#ffb000]/40 hover:border-[#ffb000] bg-[#0d0a08]"
-        } mb-4 flex flex-col items-center justify-center cursor-pointer min-h-[140px]`}
-        onClick={() => document.getElementById("file-loader-input")?.click()}
-      >
-        <input
-          id="file-loader-input"
-          type="file"
-          accept=".json"
-          onChange={handleFileChange}
-          className="hidden"
-        />
+      <JsonDropZone
+        dragActive={dragActive}
+        selectedFileName={selectedFileName}
+        onDragState={setDragActive}
+        onFile={processFile}
+      />
 
-        <FileJson
-          className={`w-8 h-8 mb-2 ${dragActive ? "text-emerald-400 animate-bounce" : "text-[#ffb000]/60"}`}
-        />
+      <JsonManualEditor
+        uploadType={uploadType}
+        value={jsonInput}
+        onChange={setJsonInput}
+      />
 
-        {selectedFileName ? (
-          <div>
-            <p className="font-retro text-[9px] text-emerald-400 uppercase glow-emerald mb-1">
-              Fita de Dados Acoplada com Sucesso
-            </p>
-            <p className="font-mono text-xs text-[#ffb000] font-bold border border-[#ffb000]/30 py-1 px-2.5 bg-[#1a140f] max-w-xs truncate mx-auto">
-              [ {selectedFileName} ]
-            </p>
-            <p className="font-mono text-[9px] text-[#ffb000]/50 mt-1 uppercase">
-              Arraste outro arquivo ou clique aqui para alterar
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p className="font-retro text-[9px] text-[#ffb000]/90 uppercase tracking-widest">
-              Inserir Fita Magnética (.JSON)
-            </p>
-            <p className="font-mono text-xs text-[#ffb000]/65 mt-1 max-w-xs mx-auto">
-              Arraste seu arquivo JSON aqui ou clique para selecionar.
-            </p>
-          </div>
-        )}
-      </div>
-
-      <details className="mb-4 font-mono select-none group text-xs text-[#ffb000]/80">
-        <summary className="cursor-pointer list-none flex items-center justify-between p-1.5 border border-[#ffb000]/20 bg-[#16120e] hover:bg-[#261d15] transition-all">
-          <span className="text-[10px] uppercase font-retro tracking-wide">
-            [ + ] Visualizar / Editar Código JSON Manual
-          </span>
-          <span className="text-[9px] text-[#ffb000]/50 uppercase tracking-widest group-open:hidden">
-            Expandir
-          </span>
-          <span className="text-[9px] text-[#ffb000]/50 uppercase tracking-widest hidden group-open:inline">
-            Recolher
-          </span>
-        </summary>
-        <div className="p-3 border-x border-b border-[#ffb000]/20 bg-[#0d0a08] space-y-1">
-          <label className="block text-[10px] uppercase tracking-wider text-[#ffb000]/65 mb-1">
-            Buffer de comandos carregados (Edição habilitada):
-          </label>
-          <textarea
-            id="json-textarea-input"
-            value={jsonInput}
-            onChange={(e) => setJsonInput(e.target.value)}
-            placeholder={
-              uploadType === "hacks"
-                ? '[\n  {\n    "nome": "Vida Infinita",\n    "movimentos": "CIMA, CIMA, BAIXO, B, A",\n    "desc": "Te deixa com vida ilimitada para sobreviver a qualquer inimigo."\n  }\n]'
-                : '[\n  {\n    "nome": "Ruído Verde",\n    "desc": "Fique pulando em um pé só por 30 segundos"\n  }\n]'
-            }
-            className="w-full h-32 bg-[#0d0a08] border border-[#ffb000]/40 rounded-none p-2 font-mono text-xs text-[#ffb000] focus:outline-none focus:border-[#ffb000] resize-none"
-          />
-        </div>
-      </details>
-
-      {errorMsg && (
-        <div
-          id="upload-panel-error"
-          className="mb-4 p-3 border border-red-500 bg-red-950/20 text-red-400 rounded-none text-xs flex gap-2 items-start font-mono"
-        >
-          <AlertTriangle className="w-5 h-5 flex-shrink-0" />
-          <div>
-            <strong className="block uppercase text-red-500">Erro de Sintaxe:</strong>
-            {errorMsg}
-          </div>
-        </div>
-      )}
-
-      {successMsg && (
-        <div
-          id="upload-panel-success"
-          className="mb-4 p-3 border border-emerald-500 bg-emerald-950/20 text-emerald-400 rounded-none text-xs flex gap-2 items-start font-mono"
-        >
-          <CheckCircle className="w-5 h-5 flex-shrink-0" />
-          <div>
-            <strong className="block uppercase text-emerald-500">Transmissão Completa:</strong>
-            {successMsg}
-          </div>
-        </div>
-      )}
+      <UploadFeedback errorMsg={errorMsg} successMsg={successMsg} />
 
       <div className="flex flex-col sm:flex-row gap-2">
         <button

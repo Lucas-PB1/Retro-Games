@@ -6,4 +6,6 @@ export const FIELD_MAX = {
   userEmail: 128,
   userName: 128,
   docId: 128,
+  photoURL: 2048,
+  hackNome: 250,
 } as const;

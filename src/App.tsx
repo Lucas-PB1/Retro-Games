@@ -1,4 +1,3 @@
-import { useState } from "react";
 import AuthLoadingScreen from "./components/AuthLoadingScreen";
 import LoginScreen from "./components/LoginScreen";
 import Dashboard from "./components/Dashboard";
@@ -9,29 +8,19 @@ import { useNotification } from "./hooks/useNotification";
 import { errorMessage } from "./lib/firebase";
 
 export default function App() {
-  const { user, authLoading, authError, loginWithGoogle, logout } = useAuth();
+  const { user, authLoading, authBusy, authError, loginWithGoogle, logout } = useAuth();
   const { hacks, consequences, logs } = useGameData(Boolean(user));
-  const { writeLog, clearLogs } = useGameLogs(user);
-  const { notification, setNotification } = useNotification();
-  const [loadingReset, setLoadingReset] = useState(false);
+  const { writeLog, clearLogs, clearing } = useGameLogs(user);
+  const { notification, notifySuccess, notifyError } = useNotification();
 
   const handleClearLogs = async () => {
-    if (!user) return;
-    setLoadingReset(true);
+    if (!user || clearing) return;
     try {
       await clearLogs();
-      setNotification({
-        message: "Sucesso: Histórico de logs limpo com sucesso!",
-        type: "success",
-      });
+      notifySuccess("Sucesso: Histórico de logs limpo com sucesso!");
     } catch (error) {
       console.error("Erro ao limpar logs:", error);
-      setNotification({
-        message: "Erro ao deletar logs: " + errorMessage(error),
-        type: "error",
-      });
-    } finally {
-      setLoadingReset(false);
+      notifyError("Erro ao deletar logs: " + errorMessage(error));
     }
   };
 
@@ -40,7 +29,13 @@ export default function App() {
   }
 
   if (!user) {
-    return <LoginScreen onLogin={loginWithGoogle} authError={authError} />;
+    return (
+      <LoginScreen
+        onLogin={loginWithGoogle}
+        authError={authError}
+        authBusy={authBusy}
+      />
+    );
   }
 
   return (
@@ -51,8 +46,9 @@ export default function App() {
       logs={logs}
       onLogAction={writeLog}
       onClearLogs={handleClearLogs}
-      loadingClear={loadingReset}
+      loadingClear={clearing}
       onLogout={logout}
+      logoutBusy={authBusy}
       notification={notification}
     />
   );

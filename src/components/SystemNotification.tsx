@@ -10,6 +10,7 @@ export default function SystemNotification({ notification }: SystemNotificationP
   return (
     <div
       role="status"
+      aria-live="polite"
       className={`fixed bottom-6 right-6 z-50 bg-[#0d0a08] border-2 p-4 rounded-none max-w-sm shadow-2xl animate-fade-in ${
         isError
           ? "border-red-500 text-red-400 shadow-red-500/10"

@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import { doc, updateDoc } from "firebase/firestore";
-import { Dice5, Shuffle } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
 import { HackCode, Consequence, WriteLogFn, OperationType } from "../types";
-import { db, handleFirestoreError } from "../lib/firebase";
+import { db, errorMessage, handleFirestoreError } from "../lib/firebase";
 import { commitBatched } from "../lib/ids";
+import { pickRandom } from "../lib/random";
 import { useRollAnimation } from "../hooks/useRollAnimation";
+import HackMonitor from "./HackMonitor";
+import HackRollControls from "./HackRollControls";
+import ConsequenceResult from "./ConsequenceResult";
+import RevealedHacksPanel from "./RevealedHacksPanel";
 
 interface HackSelectorProps {
   hacks: HackCode[];
   consequences: Consequence[];
   onLogAction: WriteLogFn;
-}
-
-function pickRandom<T>(items: T[]): T {
-  return items[Math.floor(Math.random() * items.length)];
 }
 
 export default function HackSelector({
@@ -28,6 +27,7 @@ export default function HackSelector({
   const [isRollingConseq, setIsRollingConseq] = useState(false);
   const [selectedConsequence, setSelectedConsequence] = useState<Consequence | null>(null);
   const [isResettingProgress, setIsResettingProgress] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
 
   const hackRoll = useRollAnimation();
   const conseqRoll = useRollAnimation();
@@ -59,6 +59,7 @@ export default function HackSelector({
     setIsRollingHack(true);
     setSelectedHack(null);
     setSelectedConsequence(null);
+    setResetError(null);
 
     hackRoll.run(
       15,
@@ -93,6 +94,7 @@ export default function HackSelector({
 
   const handleResetRevealedProgress = async () => {
     setIsResettingProgress(true);
+    setResetError(null);
     try {
       await commitBatched(revealed, (batch, hack) => {
         batch.update(doc(db, "hack_codes", hack.id), { revelado: false });
@@ -106,6 +108,9 @@ export default function HackSelector({
       setSelectedConsequence(null);
     } catch (error) {
       console.error("Erro ao rebobinar progresso:", error);
+      setResetError(
+        "Falha ao rebobinar. Verifique a conexão e tente novamente: " + errorMessage(error)
+      );
     } finally {
       setIsResettingProgress(false);
     }
@@ -120,201 +125,33 @@ export default function HackSelector({
       <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-white/10 to-transparent rounded-full blur-xl pointer-events-none z-10" />
 
       <div className="relative z-10 w-full flex flex-col h-full justify-between">
-        {selectedHack || isRollingHack ? (
-          <div className="bg-[#0d0a08] border border-[#ffb000] p-3 rounded-none shadow-inner relative flex flex-col justify-center min-h-[120px]">
-            <div className="absolute top-2 left-3 flex items-center gap-1.5 font-mono text-[9px] text-[#ffb000]">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  isRollingHack || isRollingConseq ? "bg-red-500 animate-pulse" : "bg-[#ffb000]"
-                }`}
-              />
-              <span>{isRollingHack || isRollingConseq ? "AQUISIÇÃO ATIVA" : "MONITOR ESTÁVEL"}</span>
-            </div>
+        <HackMonitor
+          selectedHack={selectedHack}
+          isRollingHack={isRollingHack}
+          isRollingConseq={isRollingConseq}
+          highlightedName={highlightedName}
+        />
 
-            <div className="absolute top-2 right-3 font-mono text-[9px] text-[#ffb000]/50 uppercase">
-              Série 1968
-            </div>
+        <HackRollControls
+          hacksTotal={hacks.length}
+          unrevealedCount={unrevealed.length}
+          consequencesTotal={consequences.length}
+          hasSelectedHack={Boolean(selectedHack)}
+          isRollingHack={isRollingHack}
+          isRollingConseq={isRollingConseq}
+          onRollHack={rollHackCode}
+          onRollConsequence={rollConsequence}
+        />
 
-            <div className="py-2 mt-4">
-              {isRollingHack ? (
-                <div className="h-16 flex items-center justify-center">
-                  <span className="font-retro text-[11px] text-[#ffb000] glow-amber uppercase animate-bounce">
-                    {highlightedName}
-                  </span>
-                </div>
-              ) : (
-                <AnimatePresence mode="wait">
-                  {selectedHack && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.98 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="space-y-2"
-                    >
-                      <span className="font-mono text-[9px] text-[#ffb000] px-2 py-0.5 border border-[#ffb000]/40 bg-[#332200] inline-block uppercase">
-                        SINAL DETECTADO
-                      </span>
-                      <h3 className="font-retro text-[12px] text-[#ffb000] glow-amber uppercase block">
-                        {selectedHack.nome}
-                      </h3>
+        <ConsequenceResult consequence={selectedConsequence} />
 
-                      <div className="p-2 border border-dashed border-[#ffb000]/40 bg-[#1a140f] rounded-none">
-                        <span className="font-mono text-[9px] text-[#ffb000]/60 block uppercase">
-                          Série de Comandos:
-                        </span>
-                        <code className="text-[#ffb000] glow-amber text-[14px] font-retro tracking-widest break-words leading-relaxed block py-1">
-                          {selectedHack.movimentos}
-                        </code>
-                        {selectedHack.desc && (
-                          <div className="mt-1.5 pt-1.5 border-t border-[#ffb000]/20 text-left">
-                            <span className="font-mono text-[9px] text-[#ffb000]/50 block uppercase">
-                              efeito / descrição:
-                            </span>
-                            <span className="font-mono text-xs text-[#ffb000]/90 leading-relaxed block">
-                              {selectedHack.desc}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="py-2 flex flex-col items-center justify-center">
-            <h2 className="font-retro text-[12px] md:text-sm leading-relaxed text-[#ffb000] mb-1 glow-amber">
-              CENTRAL DE CODIFICAÇÃO AMBER
-            </h2>
-            <p className="text-[9px] font-mono text-[#ffb000]/50 uppercase tracking-widest animate-pulse">
-              SISTEMA PRONTO PARA SORTEIO
-            </p>
-          </div>
-        )}
-
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col items-center">
-            <span className="text-[9px] text-[#ffb000] font-retro tracking-widest uppercase mb-1">
-              CHASSI DE SELEÇÃO
-            </span>
-            <button
-              id="btn-roll-hack-code"
-              onClick={rollHackCode}
-              disabled={isRollingHack || unrevealed.length === 0}
-              className={`w-full py-2.5 px-6 retro-switch retro-switch-green md:text-sm text-xs font-retro tracking-wider rounded-none text-white font-bold flex items-center justify-center gap-2 cursor-pointer ${
-                unrevealed.length === 0 ? "opacity-40 cursor-not-allowed bg-slate-800 border-slate-700" : ""
-              }`}
-            >
-              <Shuffle className="w-4 h-4" />
-              {isRollingHack ? "GIRANDO TAMBOR..." : "REVELAR CÓDIGO"}
-            </button>
-            {hacks.length === 0 ? (
-              <p className="text-[10px] font-mono text-[#ffb000]/60 mt-2 text-center">
-                * Upload fita JSON de Códigos abaixo para iniciar
-              </p>
-            ) : unrevealed.length === 0 ? (
-              <p className="text-[10px] font-mono text-red-500 mt-2 text-center animate-pulse tracking-wide font-bold">
-                * TODOS OS CÓDIGOS REVELADOS! PEÇA REBOBINAR ABAIXO.
-              </p>
-            ) : (
-              <p className="text-[10px] font-mono text-[#ffb000]/60 mt-2 text-center">
-                * Restam {unrevealed.length} códigos não revelados
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-col items-center">
-            <span className="text-[9px] text-[#ffb000] font-retro tracking-widest uppercase mb-1">
-              EFEITOS DE SISTEMA
-            </span>
-            <button
-              id="btn-roll-consequence"
-              onClick={rollConsequence}
-              disabled={isRollingConseq || consequences.length === 0 || !selectedHack}
-              className={`w-full py-2.5 px-6 retro-switch retro-switch-amber md:text-sm text-xs font-retro tracking-wider rounded-none text-white font-bold flex items-center justify-center gap-2 cursor-pointer ${
-                consequences.length === 0 || !selectedHack ? "opacity-40 cursor-not-allowed" : ""
-              }`}
-            >
-              <Dice5 className="w-4 h-4" />
-              {isRollingConseq ? "GERANDO EFEITO..." : "CONSEQUÊNCIA (+)"}
-            </button>
-            {!selectedHack && consequences.length > 0 && (
-              <p className="text-[10px] font-mono text-[#ffb000]/60 mt-2 text-center">
-                * Sorteie primeiro um Código de Hack
-              </p>
-            )}
-            {consequences.length === 0 && (
-              <p className="text-[10px] font-mono text-[#ffb000]/60 mt-2 text-center">
-                * Insira JSON de consequências abaixo para habilitar
-              </p>
-            )}
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {selectedConsequence && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="mt-6 border border-[#ffb000] bg-[#0d0a08] p-4 rounded-none text-[#ffb000] relative overflow-hidden"
-            >
-              <div className="absolute top-1.5 right-2 font-mono text-[9px] text-[#ffb000]/50 uppercase tracking-widest">
-                EFEITO DE EVENTO ATIVO
-              </div>
-              <div className="flex gap-2 items-start mt-1">
-                <Dice5 className="w-6 h-6 text-[#ffb000] flex-shrink-0 animate-bounce" />
-                <div className="w-full">
-                  <h4 className="font-retro text-[10px] uppercase tracking-wide glow-amber underline">
-                    {selectedConsequence.nome}
-                  </h4>
-                  <p className="font-mono text-xs text-[#ffb000]/90 mt-1 leading-relaxed">
-                    {selectedConsequence.desc}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="mt-6 border border-[#ffb000]/30 bg-[#0d0a08] p-3 text-[#ffb000]">
-          <div className="flex items-center justify-between border-b border-[#ffb000]/20 pb-1.5 mb-2">
-            <span className="font-retro text-[9px] tracking-wide uppercase flex items-center gap-1.5">
-              <span className="inline-block w-1.5 h-1.5 bg-[#ffb000]" />
-              Fitas Reveladas ({revealed.length} de {hacks.length})
-            </span>
-            {revealed.length > 0 && (
-              <button
-                onClick={handleResetRevealedProgress}
-                disabled={isResettingProgress}
-                className="text-[9px] font-mono text-[#ffb000]/60 hover:text-[#ffb000] underline focus:outline-none cursor-pointer disabled:opacity-50"
-              >
-                [ {isResettingProgress ? "REBOBINANDO..." : "REBOBINAR TODAS SELEÇÕES"} ]
-              </button>
-            )}
-          </div>
-
-          <div className="max-h-24 overflow-y-auto space-y-1 pr-1 font-mono text-[10px] scrollbar-thin">
-            {revealed.length === 0 ? (
-              <div className="text-center text-[#ffb000]/30 italic py-2 uppercase">
-                [ NENHUM CÓDIGO REVELADO AINDA ]
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                {revealed.map((h) => (
-                  <div
-                    key={h.id}
-                    className="p-1 px-1.5 border border-[#ffb000]/10 bg-[#16120e] flex items-center justify-between gap-1"
-                  >
-                    <span className="truncate text-[#ffb000]/80">{h.nome}</span>
-                    <span className="text-[#ffb000]/40 text-[9px] shrink-0 font-mono">[SAIU]</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        <RevealedHacksPanel
+          revealed={revealed}
+          hacksTotal={hacks.length}
+          isResetting={isResettingProgress}
+          resetError={resetError}
+          onReset={handleResetRevealedProgress}
+        />
       </div>
     </div>
   );

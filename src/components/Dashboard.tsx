@@ -4,6 +4,7 @@ import HackSelector from "./HackSelector";
 import JSONUploader from "./JSONUploader";
 import RetroLogViewer from "./RetroLogViewer";
 import SystemNotification from "./SystemNotification";
+import RetroTab from "./RetroTab";
 import type { HackCode, Consequence, GameLog, WriteLogFn } from "../types";
 import type { Notification } from "../hooks/useNotification";
 
@@ -18,6 +19,7 @@ interface DashboardProps {
   onClearLogs: () => Promise<void>;
   loadingClear: boolean;
   onLogout: () => void;
+  logoutBusy: boolean;
   notification: Notification | null;
 }
 
@@ -30,6 +32,7 @@ export default function Dashboard({
   onClearLogs,
   loadingClear,
   onLogout,
+  logoutBusy,
   notification,
 }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>("controller");
@@ -50,46 +53,46 @@ export default function Dashboard({
           id="btn-account-logout"
           type="button"
           onClick={onLogout}
+          disabled={logoutBusy}
+          aria-busy={logoutBusy}
           title="Sair do Terminal"
-          className="p-1 sm:p-1.5 border border-[#ffb000]/30 hover:border-red-500 bg-[#0d0a08] hover:bg-red-950/20 text-[#ffb000] hover:text-red-400 rounded-none transition-all cursor-pointer focus:outline-none flex items-center gap-1.5 font-retro text-[9px] uppercase tracking-wider"
+          className="p-1 sm:p-1.5 border border-[#ffb000]/30 hover:border-red-500 bg-[#0d0a08] hover:bg-red-950/20 text-[#ffb000] hover:text-red-400 rounded-none transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 flex items-center gap-1.5 font-retro text-[9px] uppercase tracking-wider disabled:opacity-50 disabled:cursor-wait"
         >
-          <span className="hidden sm:inline">Sair</span>
+          <span className="hidden sm:inline">{logoutBusy ? "Saindo" : "Sair"}</span>
           <LogOut className="w-3.5 h-3.5" />
         </button>
       </header>
 
-      <div className="max-w-7xl w-full mx-auto mb-4 sm:mb-6 grid grid-cols-2 border border-[#ffb000]/60 sm:border-2 sm:border-[#ffb000] bg-[#0d0a08] p-0.5 sm:p-1 gap-1">
-        <button
+      <div
+        role="tablist"
+        aria-label="Módulos do terminal"
+        className="max-w-7xl w-full mx-auto mb-4 sm:mb-6 grid grid-cols-2 border border-[#ffb000]/60 sm:border-2 sm:border-[#ffb000] bg-[#0d0a08] p-0.5 sm:p-1 gap-1"
+      >
+        <RetroTab
           id="tab-controller"
-          type="button"
+          active={activeTab === "controller"}
           onClick={() => setActiveTab("controller")}
-          className={`py-2 px-3 sm:py-3.5 sm:px-4 font-retro text-[9px] sm:text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 rounded-none cursor-pointer focus:outline-none ${
-            activeTab === "controller"
-              ? "bg-[#332200] text-[#ffb000] border border-[#ffb000] font-bold glow-amber"
-              : "bg-[#16120e] text-[#ffb000]/50 hover:bg-[#211a14] hover:text-[#ffb000]/80"
-          }`}
         >
           <Gamepad2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           <span>Controle (Roleta)</span>
-        </button>
-        <button
+        </RetroTab>
+        <RetroTab
           id="tab-terminal"
-          type="button"
+          active={activeTab === "terminal"}
           onClick={() => setActiveTab("terminal")}
-          className={`py-2 px-3 sm:py-3.5 sm:px-4 font-retro text-[9px] sm:text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-1.5 rounded-none cursor-pointer focus:outline-none ${
-            activeTab === "terminal"
-              ? "bg-[#332200] text-[#ffb000] border border-[#ffb000] font-bold glow-amber"
-              : "bg-[#16120e] text-[#ffb000]/50 hover:bg-[#211a14] hover:text-[#ffb000]/80"
-          }`}
         >
           <Terminal className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           <span>Fitas e Logs ({hacks.length})</span>
-        </button>
+        </RetroTab>
       </div>
 
       <main className="max-w-7xl w-full mx-auto flex-grow">
         {activeTab === "controller" ? (
-          <div className="wood-bezel w-full rounded-none p-1 sm:p-2 mb-4 border border-[#ffb000]/60 sm:border-2 sm:border-[#ffb000] bg-[#1a140f] shadow-inner relative">
+          <div
+            role="tabpanel"
+            aria-labelledby="tab-controller"
+            className="wood-bezel w-full rounded-none p-1 sm:p-2 mb-4 border border-[#ffb000]/60 sm:border-2 sm:border-[#ffb000] bg-[#1a140f] shadow-inner relative"
+          >
             <HackSelector
               hacks={hacks}
               consequences={consequences}
@@ -97,7 +100,11 @@ export default function Dashboard({
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 animate-fade-in">
+          <div
+            role="tabpanel"
+            aria-labelledby="tab-terminal"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 animate-fade-in"
+          >
             <div className="lg:col-span-6 flex flex-col">
               <RetroLogViewer
                 logs={logs}

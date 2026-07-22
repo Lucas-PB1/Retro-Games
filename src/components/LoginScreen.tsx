@@ -3,9 +3,10 @@ import { Gamepad2, CircleUser } from "lucide-react";
 interface LoginScreenProps {
   onLogin: () => void;
   authError: string | null;
+  authBusy: boolean;
 }
 
-export default function LoginScreen({ onLogin, authError }: LoginScreenProps) {
+export default function LoginScreen({ onLogin, authError, authBusy }: LoginScreenProps) {
   return (
     <div className="min-h-screen bg-[#0d0a08] flex flex-col items-center justify-center p-4 sm:p-6 crt-container relative selection:bg-[#332200] selection:text-[#ffb000]">
       <div className="absolute inset-0 bg-[#1a140f] opacity-90 z-0 pointer-events-none crt-screen" />
@@ -42,10 +43,12 @@ export default function LoginScreen({ onLogin, authError }: LoginScreenProps) {
           id="btn-google-auth-login"
           type="button"
           onClick={onLogin}
-          className="w-full py-4 px-6 retro-switch retro-switch-green font-retro text-[10px] tracking-wider rounded-none text-black font-bold flex items-center justify-center gap-3 cursor-pointer border-2 border-[#ffb000]"
+          disabled={authBusy}
+          aria-busy={authBusy}
+          className="w-full py-4 px-6 retro-switch retro-switch-green font-retro text-[10px] tracking-wider rounded-none text-black font-bold flex items-center justify-center gap-3 cursor-pointer border-2 border-[#ffb000] disabled:opacity-60 disabled:cursor-wait"
         >
           <CircleUser className="w-4 h-4 text-black" />
-          ACESSAR COM GOOGLE
+          {authBusy ? "AUTENTICANDO..." : "ACESSAR COM GOOGLE"}
         </button>
 
         {authError && (
